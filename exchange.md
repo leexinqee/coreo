@@ -32,5 +32,93 @@ function deepClone(obj = {}, map = new WeekMap()) {
 }
 ```
 
+### call方法实现
+```
+Function.prototype.myCall = function (context = window) {
+  if (typeof this !== 'function') {
+    throw new Error('Type error')
+  }
+
+  // 取入参的参数
+  const args = [...arguments].slice(1)
+
+  // 执行结果
+  let result = null;
+
+  const fnName = Symbol()
+  context[fnName] = this
+  if (args.length) {
+    result = context[fnName](...args)
+  } else {
+    result = context[fnName]()
+  }
+  delete context[fnName]
+
+  return result
+}
+```
+
+### apply方法实现
+```
+Function.prototype.myApply = function (context = window) {
+  if (typeof this !== 'function') {
+    throw new Error('Type error')
+  }
+
+  // 执行结果
+  let result = null;
+
+  const fnName = Symbol()
+  context[fnName] = this
+
+  if (arguments[1]) {
+    result = context[fnName](...arguments[1])
+  } else {
+    result = context[fnName]()
+  }
+  delete context[fnName]
+
+  return result
+}
+```
+
+### 事件触发器
+```
+class EventBus {
+  constructor() {
+    this.$events = {}
+  }
+
+  $on(eventName, callback) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = []
+    }
+    this.events[eventName].push(callback)
+  }
+
+  $emit(eventName, ...args) {
+    const eventList = this.events[eventName]
+    if (eventList && eventList.length) {
+      eventList.map(callback => {
+        callback(...args)
+      })
+    }
+  }
+
+  $off(eventName) {
+    const eventList = this.events[eventName]
+    if (eventList) {
+      delete this.events[eventName]
+    }
+  }
+}
+```
+
+
+
+
+
+
+
 
 
