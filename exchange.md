@@ -82,6 +82,24 @@ Function.prototype.myApply = function (context = window) {
 }
 ```
 
+### bind方法实现
+```
+Function.prototype.myBind = function(context = window) {
+  if (typeof this !== 'function') {
+    throw new Error('Type error')
+  }
+
+  // 取入参的参数
+  const args = [...arguments].slice(1)
+
+  const fn = this
+  return function Fn() {
+    fn.apply(this instanceof fn ? this : context, args.concat(...arguments))
+  }
+}
+```
+
+
 ### 事件触发器
 ```
 class EventBus {
